@@ -12,7 +12,13 @@ program. Your Go program sends commands to `wish`, and when you want
 information, such as the contents of an entry field, or a reaction
 to a button click, `wish` sends that information back to your Go program
 via network sockets. As a result, there is no messing about with
-`unsafe` memory management calling into C libraries.
+unsafe memory management calling into C libraries.
+
+Most examples of Tcl/Tk usage [here](https://tkdocs.com/tutorial/firstexample.html)
+use languages that are dynamic. Tcl/Tk is dynamic as well. And of course
+Go is not. The best concession I could come up with was to use chained
+function calls that end with `Exec()` for the dynamic pieces,
+as can be seen in the `gotk_test.go` file. 
 
 #### Limitations
 At this point, the library is strictly UI-centric. It does not support
@@ -20,5 +26,5 @@ any of the Tcl commands, though you can send raw commands using
 this library if you want. The intent is to have Go create a UI, and
 the events (button clicks, primarily) will call Go functions.
 
-For a quick example, see the gotk_test.go file.
+For a quick example, see the `gotk_test.go` file.
 This is a work in progress, not ready for prime-time.
