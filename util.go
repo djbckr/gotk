@@ -5,20 +5,22 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var alphabet = [...]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
-
 var alphabetLen = len(alphabet)
 
 type widgetChanType = map[string]chan string
-
 var widgetChannels = make(widgetChanType)
+
+// use our own rand/source so-as to not mess up somebody else's
+var myRand = rand.New(rand.NewSource(time.Now().Unix()))
 
 func randString(length int) string {
 	var sb strings.Builder
 	for i := 1; i <= length; i++ {
-		idx := rand.Int() % alphabetLen
+		idx := myRand.Int() % alphabetLen
 		sb.WriteString(alphabet[idx])
 	}
 	return sb.String()

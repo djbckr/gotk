@@ -2,7 +2,6 @@ package gotk
 
 import (
 	"fmt"
-	"strings"
 )
 
 type WidgetState = string
@@ -80,24 +79,7 @@ func (e *entry) SetState(state WidgetState) *entry {
 }
 
 func (e *entry) Value() string {
-
-	var sb strings.Builder
-
-	// write the "header"
-	sb.WriteString(fmt.Sprintf("puts -nonewline $sockChan {¶%v¶} ; ", e.varname))
-	// write the "data"
-	sb.WriteString(fmt.Sprintf("puts -nonewline $sockChan $::%v ; ", e.varname))
-	// write the "trailer" and flush
-	sb.WriteString(fmt.Sprintf("puts $sockChan {§%v§} ; flush $sockChan", e.varname))
-
-	e.instance.Send(sb.String())
-
-	fmt.Println("entry waiting...")
-	// this waits until something shows up on the channel
-	rslt :=  <- widgetChannels[e.varname]
-	fmt.Println("...entry done")
-	return rslt
-
+	return e.instance.sendAndGetResponse(e.varname, fmt.Sprintf("$::%v", e.varname), false)
 }
 
 func (e *entry) SetValue(v string) {

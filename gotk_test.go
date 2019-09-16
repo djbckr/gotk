@@ -83,7 +83,18 @@ func TestTk(t *testing.T) {
 	// bind . <Return> {calculate}
 	ui.SetBind(root, "<Return>", calc)
 
+	ui.WmSetGeometry(root, 500, 250, 300, 800)
+
 	time.Sleep(100 * time.Second)
 	ui.Close()
 }
 
+
+/*
+
+    wm geometry . {2000x600+2038+-100} << leave {...} off for query
+    . cget -class
+
+
+
+*/

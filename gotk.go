@@ -27,12 +27,10 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
 	"net"
 	"os/exec"
 	"regexp"
 	"strings"
-	"time"
 )
 
 type GoTk struct {
@@ -56,9 +54,6 @@ func Tk() *GoTk {
 	pipeIn, _ := cmd.StdinPipe()
 	pipeOut, _ := cmd.StdoutPipe()
 	pipeErr, _ := cmd.StderrPipe()
-
-	// we use random strings for variable names
-	rand.Seed(time.Now().Unix())
 
 	// stdout handler; anything here is preceded by a bullet (•) in the console
 	go func() {
@@ -116,7 +111,7 @@ func Tk() *GoTk {
 
 	// find the port that we opened on net.listener
 	re := regexp.MustCompile(`\d+$`)
-	port := string(re.Find([]byte(listener.Addr().String())))
+	port := re.FindString(listener.Addr().String())
 
 	// tell wish to open a socket back to this program
 	gotk.Send(fmt.Sprintf("set sockChan [socket localhost %v]", port))
@@ -214,4 +209,38 @@ func listenerControl(gt *GoTk) {
 
 		}(conn)
 	}
+}
+
+// sendAndGetResponse
+// We need information from Tk. In order to do this, we have to tell it to send
+// data on the $sockChan, but we also need to identify the variable/channel it belongs
+// to.  We use ¶varname¶ for the header and §varname§ for the trailer, and whatever
+// the command is in-between. Flushing $sockChan is required for timely response.
+func (gt *GoTk) sendAndGetResponse(channelName string, command string, isSubCommand bool) (response string) {
+
+	ch := widgetChannels[channelName]
+
+	// channel may not exist, which is fine; create it
+	if ch == nil {
+		ch = make(chan string)
+		widgetChannels[channelName] = ch
+	}
+
+	var sb strings.Builder
+
+	sb.WriteString(fmt.Sprintf("puts -nonewline $sockChan {¶%v¶} ; ", channelName))
+	if isSubCommand {
+		// a sub-command needs brackets around it
+		sb.WriteString(fmt.Sprintf("puts -nonewline $sockChan [%v] ; ", command))
+	} else {
+		// this is likely a variable name, so no brackets here
+		sb.WriteString(fmt.Sprintf("puts -nonewline $sockChan %v ; ", command))
+	}
+	sb.WriteString(fmt.Sprintf("puts $sockChan {§%v§} ; flush $sockChan", channelName))
+
+	gt.Send(sb.String())
+
+	response = <- ch
+
+	return
 }

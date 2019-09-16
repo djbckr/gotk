@@ -2,8 +2,38 @@ package gotk
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
+
+/**************************************************************/
+func (gt *GoTk) SetGridAnchor(widget Widget, anchor string) {
+	gt.Send(fmt.Sprintf("grid anchor %v {%v}", widget.Path(), anchor))
+}
+
+func (gt *GoTk) SetGridBBox(widget Widget, top int, left int, width int, height int) {
+	gt.Send(fmt.Sprintf("grid bbox %v %v %v %v %v", widget.Path(), top, left, width, height))
+}
+
+var gridBBoxChName = randString(5)
+
+func (gt *GoTk) GridBBox(widget Widget) (top int, left int, width int, height int) {
+
+	rslt := gt.sendAndGetResponse(gridBBoxChName, fmt.Sprintf("grid bbox %v", widget.Path()), true)
+
+	r2 := strings.Split(rslt, " ")
+
+	if len(r2) != 4 {
+		return
+	}
+
+	top, _ = strconv.Atoi(r2[0])
+	left, _ = strconv.Atoi(r2[1])
+	width, _ = strconv.Atoi(r2[2])
+	height, _ = strconv.Atoi(r2[3])
+
+	return
+}
 
 /**************************************************************/
 
