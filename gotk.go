@@ -2,23 +2,23 @@ package gotk
 
 /*
 
-    GoTk - a golang UI library using the Tcl/Tk library
-    Copyright (C) 2019  Dean J. Becker
+   GoTk - a golang UI library using the Tcl/Tk library
+   Copyright (C) 2019  Dean J. Becker
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    The author can be reached at dean.becker@rubywillow.net
+   The author can be reached at dean.becker@rubywillow.net
 
 */
 
@@ -34,13 +34,15 @@ import (
 )
 
 type GoTk struct {
-	cmd      *exec.Cmd
-	stdIn    io.WriteCloser
-	stdOut   io.ReadCloser
-	stdErr   io.ReadCloser
-	root     *root
-	listener net.Listener
-	sendchan chan string
+	cmd                *exec.Cmd
+	stdIn              io.WriteCloser
+	stdOut             io.ReadCloser
+	stdErr             io.ReadCloser
+	root               *root
+	listener           net.Listener
+	sendchan           chan string
+	mouseWheelChName   string
+	mouseWheelChannels []MouseWheelChannel
 }
 
 // Tk instantiates a UI (TK) session
@@ -88,12 +90,13 @@ func Tk() *GoTk {
 	}
 
 	gotk := &GoTk{
-		cmd:      cmd,
-		stdIn:    pipeIn,
-		stdOut:   pipeOut,
-		stdErr:   pipeErr,
-		listener: listener,
-		sendchan: make(chan string, 10),
+		cmd:              cmd,
+		stdIn:            pipeIn,
+		stdOut:           pipeOut,
+		stdErr:           pipeErr,
+		listener:         listener,
+		sendchan:         make(chan string, 10),
+		mouseWheelChName: randString(5),
 	}
 
 	// setup the root window; it's already made for us by wish
@@ -136,23 +139,13 @@ func (gt *GoTk) Send(s string) {
 	gt.sendchan <- s
 }
 
-// SetFocus specifies the widget that should have focus.
-func (gt *GoTk) SetFocus(widget Widget) {
-	gt.Send(fmt.Sprintf("focus %v", widget.Path()))
-}
-
-// SetBind sets a keystroke to a button invocation.
-func (gt *GoTk) SetBind(owner Widget, bind string, button Button) {
-	gt.Send(fmt.Sprintf("bind %v %v {%v}", owner.Path(), bind, button.getFnName()))
-}
-
 var reTest1 = regexp.MustCompile(`¶(\w+)¶`)
 var reTest2 = regexp.MustCompile(`(?m)¶(\w+)¶((.|\n)*)§(\w+)§`)
 
 // sender is the go-routine that sends commands to wish.
 func sender(gt *GoTk) {
 	for {
-		msg := <- gt.sendchan
+		msg := <-gt.sendchan
 		ss := fmt.Sprintf("%v\n", msg)
 		fmt.Printf("¶ %v", ss)
 		_, _ = io.WriteString(gt.stdIn, ss)
@@ -240,7 +233,7 @@ func (gt *GoTk) sendAndGetResponse(channelName string, command string, isSubComm
 
 	gt.Send(sb.String())
 
-	response = <- ch
+	response = <-ch
 
 	return
 }

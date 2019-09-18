@@ -5,6 +5,7 @@ import (
 	"github.com/djbckr/gotk"
 	"math"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
@@ -51,18 +52,24 @@ func TestTk(t *testing.T) {
 	//       set ::meters ""
 	//   }
 	// }
-	calc := ui.NewButton(frame, "Calculate", func(btn gotk.Button) {
 
-		ftVal, err := strconv.Atoi(feet.Value())
-		if err != nil {
-			meters.SetText("")
-			return
+	calcChan := make(gotk.EventChannel)
+
+	go func() {
+		for range calcChan {
+			ftVal, err := strconv.Atoi(strings.TrimSpace(feet.Value()))
+			if err != nil {
+				meters.SetText(err.Error())
+				return
+			}
+
+			rsltVal := math.Round(float64(ftVal) * 0.3048 * 10000.0) / 10000.0
+
+			meters.SetText(fmt.Sprintf("%v", rsltVal))
 		}
+	}()
 
-		rsltVal := math.Round(float64(ftVal) * 0.3048 * 10000.0) / 10000.0
-
-		meters.SetText(fmt.Sprintf("%v", rsltVal))
-	})
+	calc := ui.NewButton(frame, "Calculate", calcChan)
 
 	ui.StartGridConfig(calc).Col(3).Row(3).Sticky("w").Exec()
 
@@ -81,9 +88,19 @@ func TestTk(t *testing.T) {
 	// focus .c.feet
 	ui.SetFocus(feet)
 	// bind . <Return> {calculate}
-	ui.SetBind(root, "<Return>", calc)
+	ui.SetBindKey(root, 0, gotk.Return, calcChan)
 
-	ui.WmSetGeometry(root, 500, 250, 300, 800)
+	ui.WmSetGeometry(root, 250, 200, 100, 100)
+
+	mousewheel := make(chan int, 50)
+
+	ui.BindMouseWheel(root, 0, mousewheel)
+
+	go func() {
+		for {
+			_ = <-mousewheel
+		}
+	}()
 
 	time.Sleep(100 * time.Second)
 	ui.Close()

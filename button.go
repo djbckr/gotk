@@ -1,6 +1,8 @@
 package gotk
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Button interface {
 	Widget
@@ -14,10 +16,10 @@ type Button interface {
 
 type button struct {
 	*widget
-	fnName string
+	callbackId string
 }
 
-func (gt *GoTk) NewButton(owner Widget, text string, fn func(btn Button)) *button {
+func (gt *GoTk) NewButton(owner Widget, text string, channel EventChannel) *button {
 
 	result := &button{
 		makeWidget(owner),
@@ -26,20 +28,22 @@ func (gt *GoTk) NewButton(owner Widget, text string, fn func(btn Button)) *butto
 
 	owner.addChild(result)
 
-	widgetChannels[result.fnName] = make(chan string)
+	widgetChannels[result.callbackId] = make(chan string)
 
-	result.instance.Send(fmt.Sprintf("proc %v {} {", result.fnName))
-	result.instance.Send(fmt.Sprintf("  global sockChan"))
-	result.instance.Send(fmt.Sprintf("  puts $sockChan {¶%v¶x§%v§}", result.fnName, result.fnName))
-	result.instance.Send(fmt.Sprintf("  flush $sockChan"))
-	result.instance.Send(fmt.Sprintf("}"))
+	// result.instance.Send(fmt.Sprintf("proc %v {} {", result.callbackId))
+	// result.instance.Send(fmt.Sprintf("  global sockChan"))
+	// result.instance.Send(fmt.Sprintf("  puts $sockChan {¶%v¶x§%v§}", result.callbackId, result.callbackId))
+	// result.instance.Send(fmt.Sprintf("  flush $sockChan"))
+	// result.instance.Send(fmt.Sprintf("}"))
 
-	result.instance.Send(fmt.Sprintf("ttk::button %v -text {%v} -command %v", result.path, text, result.fnName))
+	result.instance.Send(fmt.Sprintf("ttk::button %v -text {%v} -command {puts $sockChan {¶%v¶§%v§} ; flush $sockChan}", result.path, text, result.callbackId, result.callbackId))
 
 	go func() {
 		for {
-			<- widgetChannels[result.fnName]
-			fn(result)
+			<-widgetChannels[result.callbackId]
+			channel <- &event{
+				sourceWidget: result.widget,
+			}
 		}
 	}()
 
@@ -52,7 +56,7 @@ func (b *button) SetState(state WidgetState) *button {
 }
 
 func (b *button) SetText(text string) *button {
-	widgetConfig(b, "text", "{" + text + "}")
+	widgetConfig(b, "text", "{"+text+"}")
 	return b
 }
 
@@ -67,7 +71,5 @@ func (b *button) SetWidth(width int) *button {
 }
 
 func (b *button) getFnName() string {
-	return b.fnName
+	return b.callbackId
 }
-
-

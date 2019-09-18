@@ -31,3 +31,4 @@ func (gt *GoTk) WmGeometry(wnd Widget) (width, height, left, top int)  {
 func (gt *GoTk) WmSetGeometry(wnd Widget, width, height, left, top int) {
 	gt.Send(fmt.Sprintf("wm geometry %v {%vx%v+%v+%v}", wnd.Path(), width, height, left, top))
 }
+
