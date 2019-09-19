@@ -33,6 +33,7 @@ import (
 	"strings"
 )
 
+// GoTk is the object you will interact with after you instantiate it with Tk()
 type GoTk struct {
 	cmd                *exec.Cmd
 	stdIn              io.WriteCloser
@@ -45,7 +46,7 @@ type GoTk struct {
 	mouseWheelChannels []MouseWheelChannel
 }
 
-// Tk instantiates a UI (TK) session
+// Tk instantiates a UI (TK) session. This is where you start.
 func Tk() *GoTk {
 	path, err := exec.LookPath("wish")
 	if err != nil {

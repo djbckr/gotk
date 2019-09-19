@@ -6,6 +6,7 @@ import (
 
 type WidgetState = string
 
+// Values used to set the state of a widget.
 const (
 	NORMAL   WidgetState = "normal"
 	DISABLED WidgetState = "disabled"
@@ -14,12 +15,14 @@ const (
 
 type JustifyValue = string
 
+// Values used to set the alignment of a widget.
 const (
 	LEFT   JustifyValue = "left"
 	CENTER JustifyValue = "center"
 	RIGHT  JustifyValue = "right"
 )
 
+// This is a text input box.
 type Entry interface {
 	Widget
 	SetWidth(width int) *entry

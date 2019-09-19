@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Button is a widget that is "clickable".
 type Button interface {
 	Widget
 	SetState(state WidgetState) *button

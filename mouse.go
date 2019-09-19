@@ -6,8 +6,11 @@ import (
 	"strconv"
 )
 
+// MouseWheelChannel is a simple channel that passes integers when the mouse-wheel is spun. See BindMouseWheel().
 type MouseWheelChannel = chan int
 
+// BindMouseWheel will send mwChannel a bunch of integers when the mouse wheel is spun.
+// If you call this more than once, it will send the same message to multiple channels.
 func (gt *GoTk) BindMouseWheel(owner Widget, key ModifierKey, mwChannel MouseWheelChannel)  {
 
 	var ch chan string
@@ -31,7 +34,7 @@ func (gt *GoTk) BindMouseWheel(owner Widget, key ModifierKey, mwChannel MouseWhe
 			s := <- ch
 			v, err := strconv.Atoi(s)
 			if err != nil {
-				log.Fatal("Problem reading mouse wheel")
+				log.Fatal("Problem reading mouse wheel", err)
 			}
 
 			for _, c := range gt.mouseWheelChannels {

@@ -56,7 +56,8 @@ func TestTk(t *testing.T) {
 	calcChan := make(gotk.EventChannel)
 
 	go func() {
-		for range calcChan {
+		for e := range calcChan {
+			fmt.Println(e)
 			ftVal, err := strconv.Atoi(strings.TrimSpace(feet.Value()))
 			if err != nil {
 				meters.SetText(err.Error())

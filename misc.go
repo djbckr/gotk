@@ -7,6 +7,8 @@ import (
 
 type ModifierKey int
 
+// Use these values or'd together when binding keystrokes on SetBindKey().
+// If you aren't using one of these modifiers, pass 0 (zero)
 const (
 	CTRL  ModifierKey = 0x01
 	ALT   ModifierKey = 0x02
@@ -16,20 +18,7 @@ const (
 	TRPL  ModifierKey = 0x20
 )
 
-type EventType int
-
-const (
-	Activate      EventType = 1
-	Deactivate    EventType = 2
-	KeyPress      EventType = 4
-	KeyRelease    EventType = 5
-	Enter         EventType = 6
-	Leave         EventType = 7
-	ButtonPress   EventType = 8
-	ButtonRelease EventType = 9
-	Motion        EventType = 10
-)
-
+// These constants are used for key-binding. To bind a normal key, like "a", use that.
 const (
 	Space     = "Space"
 	BackSpace = "BackSpace"
@@ -64,6 +53,7 @@ const (
 	F12       = "F12"
 )
 
+// Event is used to pass UI interactions back to your Go program. It is used in conjunction with EventChannel.
 type Event interface {
 	SourceWidget() Widget
 	MouseCoordinates() (int, int)
@@ -88,6 +78,19 @@ func (e *event) KeyPressed() string {
 	return e.key
 }
 
+/*
+  EventChannel is what your Go program will listen to when you bind a key or button click.
+  Your normal boilerplate might go something like this:
+
+    mychannel := make(EventChannel) // optionally include buffer, if you feel like you might need it.
+
+    go func() {
+      for event := range mychannel {
+        // do some processing here
+      }
+    }()
+
+*/
 type EventChannel = chan Event
 
 func (gt *GoTk) SetBindKey(owner Widget, modifier ModifierKey, key string, eventChannel EventChannel) {

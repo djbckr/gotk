@@ -14,12 +14,12 @@
 
 	Usage
 
-	You start a UI session by calling Tk()
+	You start a UI session by calling Tk(). You can conceivably have more than
+	one wish interpreter running at the same time.
 
 		ui := gotk.Tk()
 
-	This starts the wish interpreter and gives you a root window. You can conceivably have more than
-	one wish interpreter running at the same time.
+	This starts the wish interpreter and gives you a root window.
 
 	  root := ui.Root()
 
@@ -32,7 +32,7 @@
 	  frame := ui.NewFrame(root).
 			SetPadding(3, 3, 12, 12)
 
-	gotk implements most of the grid configuration functions, in which you call StartGridConfig(),
+	gotk implements most of TK's grid configuration functions. To do this, you call StartGridConfig(),
 	then a series of functions to fully configure the grid, then you call .Exec() to finish and
 	send the script to wish.
 
@@ -73,6 +73,9 @@
 
 	Now, when the calc button is clicked, or when the Return key is pressed, an event will be placed
 	into the calcChan channel, and your code will execute.
+
+	Also note with the above example function, we read a value from the feet component, and write
+	a result value to the meters component.
 
 */
 package gotk

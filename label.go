@@ -7,14 +7,15 @@ import (
 
 type Anchor = string
 
+// These values are used to set the label anchor. These are the only allowable values.
 const (
-	N Anchor = "n"
+	N  Anchor = "n"
 	NE Anchor = "ne"
-	E Anchor = "e"
+	E  Anchor = "e"
 	SE Anchor = "se"
-	S Anchor = "s"
+	S  Anchor = "s"
 	SW Anchor = "sw"
-	W Anchor = "w"
+	W  Anchor = "w"
 	NW Anchor = "nw"
 )
 
@@ -101,7 +102,7 @@ func (l *label) SetBackground() *label {
 }
 
 func (l *label) SetFont(fontName string) *label {
-	widgetConfig(l, "font", "{" + fontName + "}")
+	widgetConfig(l, "font", "{"+fontName+"}")
 	return l
 }
 
@@ -114,4 +115,3 @@ func (l *label) SetWrapLength(length int) *label {
 	widgetConfig(l, "wraplength", length)
 	return l
 }
-
