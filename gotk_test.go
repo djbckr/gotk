@@ -103,6 +103,13 @@ func TestTk(t *testing.T) {
 		}
 	}()
 
+	rslt, _ := ui.FileOpenStart().
+		SetMultiple(true).
+		SetTitle("whatever").
+		Exec()
+
+	fmt.Println(rslt)
+
 	ui.Wait()
 
 //	ui.Close()

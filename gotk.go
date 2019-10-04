@@ -46,6 +46,7 @@ type GoTk struct {
 	mouseWheelChannels []MouseWheelChannel
 	widgetChannels     widgetChanType
 	waitChannel        chan int
+	dialogChName       string
 }
 
 // Tk instantiates a UI (TK) session. This is where you start.
@@ -75,7 +76,7 @@ func Tk() *GoTk {
 
 		scanner := bufio.NewScanner(pipeErr)
 		for scanner.Scan() {
-			log.Fatal(scanner.Text())
+			fmt.Printf("SOMETHING ON STDERR: %v", scanner.Text())
 		}
 
 	}()
@@ -102,6 +103,7 @@ func Tk() *GoTk {
 		mouseWheelChName: randString(5),
 		widgetChannels:   make(widgetChanType),
 		waitChannel:      make(chan int),
+		dialogChName:     randString(5),
 	}
 
 	// setup the root window; it's already made for us by wish
@@ -129,7 +131,7 @@ func Tk() *GoTk {
 
 // Wait for the main window to close
 func (gt *GoTk) Wait() {
-	<- gt.waitChannel
+	<-gt.waitChannel
 }
 
 // Close tells TK to shutdown. This also shuts down our application.
