@@ -108,19 +108,11 @@ func TestTk(t *testing.T) {
 		SetTitle("whatever").
 		Exec()
 
-	fmt.Println(rslt)
+	for _, v := range rslt {
+		fmt.Println(v)
+	}
 
 	ui.Wait()
 
 //	ui.Close()
 }
-
-
-/*
-
-    wm geometry . {2000x600+2038+-100} << leave {...} off for query
-    . cget -class
-
-
-
-*/

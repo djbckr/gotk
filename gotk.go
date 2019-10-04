@@ -71,12 +71,12 @@ func Tk() *GoTk {
 
 	}()
 
-	// stderr handler; if anything happens on stderr, the program should probably die
+	// stderr handler - for now print warning. On OSX (my dev machine) something pops up that is just a non-event.
 	go func() {
 
 		scanner := bufio.NewScanner(pipeErr)
 		for scanner.Scan() {
-			fmt.Printf("SOMETHING ON STDERR: %v", scanner.Text())
+			fmt.Printf("WARNING FROM STDERR:\n%v\nEND WARNING FROM STDERR\n", scanner.Text())
 		}
 
 	}()

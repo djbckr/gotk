@@ -19,29 +19,29 @@ const (
 )
 
 type Widget interface {
-	Children() []*widget
+	Children() []Widget
 	Path() string
 	getInstance() *GoTk
-	getWidget() *widget
-	// Parent() *widget
+	getWidget() Widget
+	// Parent() Widget
 	addChild(child Widget)
-	SetCursor(cursorType CursorType) *widget
-	SetTakeFocus(takeFocus bool) *widget
-	SetState(state WidgetState) *widget
+	SetCursor(cursorType CursorType) Widget
+	SetTakeFocus(takeFocus bool) Widget
+	SetState(state WidgetState) Widget
 }
 
 type widget struct {
 	instance *GoTk
 	path     string
-	parent   *widget
-	children []*widget
+	parent   Widget
+	children []Widget
 }
 
-func (w *widget) Children() []*widget {
+func (w *widget) Children() []Widget {
 	return w.children
 }
 
-// func (w *widget) Parent() *widget {
+// func (w *widget) Parent() Widget {
 // 	return w.parent
 // }
 
@@ -51,17 +51,17 @@ func (w *widget) Path() string {
 	return w.path
 }
 
-func (w *widget) SetState(state WidgetState) *widget {
+func (w *widget) SetState(state WidgetState) Widget {
 	widgetConfig(w, "state", state)
 	return w
 }
 
-func (w *widget) SetCursor(cursorType CursorType) *widget {
+func (w *widget) SetCursor(cursorType CursorType) Widget {
 	widgetConfig(w, "cursor", cursorType)
 	return w
 }
 
-func (w *widget) SetTakeFocus(takeFocus bool) *widget {
+func (w *widget) SetTakeFocus(takeFocus bool) Widget {
 
 	// don't do anything if this is a frame
 	var f interface{} = w
@@ -87,7 +87,7 @@ func (w *widget) getInstance() *GoTk {
 	return w.instance
 }
 
-func (w *widget) getWidget() *widget {
+func (w *widget) getWidget() Widget {
 	return w
 }
 
@@ -103,9 +103,9 @@ type Root interface {
 }
 
 type root struct {
-	*widget
+	Widget
 }
 
 func (r *root) SetTitle(title string) {
-	r.instance.Send(fmt.Sprintf("wm title . \"%v\"", title))
+	r.getInstance().Send(fmt.Sprintf("wm title . \"%v\"", title))
 }

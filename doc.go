@@ -1,7 +1,7 @@
 /*
 	TK is a cross-platform UI scripting language. It is dynamic (not strongly typed) along
 	the same vein as python or javascript. Go is a highly structured language that is great
-	except that it does not have a UI component. Package gotk is  a bridge that allows
+	except that it does not have a UI component. Package gotk is a bridge that allows
 	a Go programmer to get a working, cross-platform UI into a Go program. It requires the use of
 	the wish interpreter. If gotk can't find wish, it will fatally crash
 	with a message that indicates that. See https://www.tcl.tk/ for more information.

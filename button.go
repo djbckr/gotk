@@ -15,10 +15,10 @@ const (
 // Button is a widget that is "clickable".
 type Button interface {
 	Widget
-	SetText(text string) *button
-	SetUnderline(underline int) *button
-	SetWidth(width int) *button
-	SetDefault(state ButtonState) *button
+	SetText(text string) Button
+	SetUnderline(underline int) Button
+	SetWidth(width int) Button
+	SetDefault(state ButtonState) Button
 	getFnName() string
 }
 
@@ -28,7 +28,7 @@ type button struct {
 }
 
 // Create a new button inside owner. You must provide and listen to an EventChannel to receive clicks.
-func (gt *GoTk) NewButton(owner Widget, text string, channel EventChannel) *button {
+func (gt *GoTk) NewButton(owner Widget, text string, channel EventChannel) Button {
 
 	result := &button{
 		makeWidget(owner),
@@ -52,24 +52,24 @@ func (gt *GoTk) NewButton(owner Widget, text string, channel EventChannel) *butt
 }
 
 // SetDefault allows the following values: ButtonStateNormal, ButtonStateActive, ButtonStateDisabled
-func (b *button) SetDefault(state ButtonState) *button {
+func (b *button) SetDefault(state ButtonState) Button {
 	widgetConfig(b, "default", state)
 	return b
 }
 
 // SetText within the button
-func (b *button) SetText(text string) *button {
+func (b *button) SetText(text string) Button {
 	widgetConfig(b, "text", "{"+text+"}")
 	return b
 }
 
 // SetUnderline specifies the integer index (0-based) of a character to underline in the text string. The underlined character is used for mnemonic activation.
-func (b *button) SetUnderline(underline int) *button {
+func (b *button) SetUnderline(underline int) Button {
 	widgetConfig(b, "underline", underline)
 	return b
 }
 
-func (b *button) SetWidth(width int) *button {
+func (b *button) SetWidth(width int) Button {
 	widgetConfig(b, "width", width)
 	return b
 }

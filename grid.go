@@ -6,7 +6,6 @@ import (
 	"strings"
 )
 
-/**************************************************************/
 func (gt *GoTk) SetGridAnchor(widget Widget, anchor string) {
 	gt.Send(fmt.Sprintf("grid anchor %v {%v}", widget.Path(), anchor))
 }
@@ -34,8 +33,6 @@ func (gt *GoTk) GridBBox(widget Widget) (top int, left int, width int, height in
 
 	return
 }
-
-/**************************************************************/
 
 type configmap = map[string]interface{}
 
@@ -139,14 +136,14 @@ type GridColRowConfig struct {
 	which    string
 }
 
-// StartGridColConfig configures a grid column
-// specify -1 for all columns
+// StartGridColConfig configures a grid column.
+// Specify -1 for all columns
 func (gt *GoTk) StartGridColConfig(master Widget, column int) *GridColRowConfig {
 	return startGridColRowConfig(gt, master, column, "columnconfigure")
 }
 
-// StartGridRowConfig configures a grid row
-// specify -1 for all rows
+// StartGridRowConfig configures a grid row.
+// Specify -1 for all rows
 func (gt *GoTk) StartGridRowConfig(master Widget, row int) *GridColRowConfig {
 	return startGridColRowConfig(gt, master, row, "rowconfigure")
 }
@@ -188,13 +185,6 @@ func (g *GridColRowConfig) Exec() {
 	}
 	g.gt.Send(fmt.Sprintf("grid %v %v %v %v", g.which, g.itemPath, colrow, mapToString(g.inf)))
 }
-
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
-/**************************************************************/
 
 func mapToString(theMap configmap) string {
 

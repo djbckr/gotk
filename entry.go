@@ -25,10 +25,10 @@ const (
 // This is a text input box.
 type Entry interface {
 	Widget
-	SetWidth(width int) *entry
-	SetExportSelection(expsel bool) *entry
-	SetJustify(lcr JustifyValue) *entry
-	SetShow(s rune) *entry
+	SetWidth(width int) Entry
+	SetExportSelection(expsel bool) Entry
+	SetJustify(lcr JustifyValue) Entry
+	SetShow(s rune) Entry
 	Value() string
 	SetValue(v string)
 }
@@ -38,7 +38,7 @@ type entry struct {
 	varname string
 }
 
-func (gt *GoTk) NewEntry(owner Widget) *entry {
+func (gt *GoTk) NewEntry(owner Widget) Entry {
 
 	result := &entry{
 		makeWidget(owner),
@@ -53,22 +53,22 @@ func (gt *GoTk) NewEntry(owner Widget) *entry {
 	return result
 }
 
-func (e *entry) SetWidth(width int) *entry {
+func (e *entry) SetWidth(width int) Entry {
 	widgetConfig(e, "width", width)
 	return e
 }
 
-func (e *entry) SetExportSelection(expsel bool) *entry {
+func (e *entry) SetExportSelection(expsel bool) Entry {
 	widgetConfig(e, "exportselection", expsel)
 	return e
 }
 
-func (e *entry) SetJustify(lcr JustifyValue) *entry {
+func (e *entry) SetJustify(lcr JustifyValue) Entry {
 	widgetConfig(e, "justify", lcr)
 	return e
 }
 
-func (e *entry) SetShow(s rune) *entry {
+func (e *entry) SetShow(s rune) Entry {
 	widgetConfig(e, "show", s)
 	return e
 }

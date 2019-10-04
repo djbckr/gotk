@@ -12,17 +12,17 @@ type FileOpenType struct {
 
 type FileOpenTypes = []FileOpenType
 
-type FileOpen interface {
-	SetParent(widget Widget) *fileopen
-	SetFileTypes(types FileOpenTypes) *fileopen
-	SetInitialDir(dir string) *fileopen
-	SetInitialFile(file string) *fileopen
-	SetMultiple(multiple bool) *fileopen
-	SetTitle(title string) *fileopen
+type FileOpenDlg interface {
+	SetParent(widget Widget) FileOpenDlg
+	SetFileTypes(types FileOpenTypes) FileOpenDlg
+	SetInitialDir(dir string) FileOpenDlg
+	SetInitialFile(file string) FileOpenDlg
+	SetMultiple(multiple bool) FileOpenDlg
+	SetTitle(title string) FileOpenDlg
 	Exec() (results []string, err error)
 }
 
-type fileopen struct {
+type fileopendlg struct {
 	parent      string
 	fileTypes   FileOpenTypes
 	initialDir  string
@@ -32,43 +32,43 @@ type fileopen struct {
 	instance    *GoTk
 }
 
-func (gt *GoTk) FileOpenStart() *fileopen {
-	return &fileopen{
+func (gt *GoTk) FileOpenStart() FileOpenDlg {
+	return &fileopendlg{
 		instance: gt,
 	}
 }
 
-func (fo *fileopen) SetParent(widget Widget) *fileopen {
+func (fo *fileopendlg) SetParent(widget Widget) FileOpenDlg {
 	fo.parent = widget.Path()
 	return fo
 }
 
-func (fo *fileopen) SetFileTypes(types FileOpenTypes) *fileopen {
+func (fo *fileopendlg) SetFileTypes(types FileOpenTypes) FileOpenDlg {
 	fo.fileTypes = types
 	return fo
 }
 
-func (fo *fileopen) SetInitialDir(dir string) *fileopen {
+func (fo *fileopendlg) SetInitialDir(dir string) FileOpenDlg {
 	fo.initialDir = dir
 	return fo
 }
 
-func (fo *fileopen) SetInitialFile(file string) *fileopen {
+func (fo *fileopendlg) SetInitialFile(file string) FileOpenDlg {
 	fo.initialFile = file
 	return fo
 }
 
-func (fo *fileopen) SetMultiple(multiple bool) *fileopen {
+func (fo *fileopendlg) SetMultiple(multiple bool) FileOpenDlg {
 	fo.multiple = multiple
 	return fo
 }
 
-func (fo *fileopen) SetTitle(title string) *fileopen {
+func (fo *fileopendlg) SetTitle(title string) FileOpenDlg {
 	fo.title = title
 	return fo
 }
 
-func (fo *fileopen) Exec() (results []string, err error) {
+func (fo *fileopendlg) Exec() (results []string, err error) {
 	var sb strings.Builder
 
 	sb.WriteString("set dlgResult [tk_getOpenFile")

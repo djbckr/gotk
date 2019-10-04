@@ -22,16 +22,16 @@ const (
 type Label interface {
 	Widget
 	SetText(text string)
-	SetWidth(width int) *label
-	SetUnderline(underline int) *label
-	SetRelief(reliefType ReliefType) *label
-	SetPadding(values ...int) *label
-	SetJustify(value JustifyValue) *label
-	SetAnchor(anchor Anchor) *label
-	SetBackground() *label
-	SetFont(fontName string) *label
-	SetForeground() *label
-	SetWrapLength(length int) *label
+	SetWidth(width int) Label
+	SetUnderline(underline int) Label
+	SetRelief(reliefType ReliefType) Label
+	SetPadding(values ...int) Label
+	SetJustify(value JustifyValue) Label
+	SetAnchor(anchor Anchor) Label
+	SetBackground() Label
+	SetFont(fontName string) Label
+	SetForeground() Label
+	SetWrapLength(length int) Label
 }
 
 type label struct {
@@ -39,7 +39,7 @@ type label struct {
 	varname string
 }
 
-func (gt *GoTk) NewLabel(owner Widget, text string) *label {
+func (gt *GoTk) NewLabel(owner Widget, text string) Label {
 
 	result := &label{
 		makeWidget(owner),
@@ -58,32 +58,32 @@ func (l *label) SetText(text string) {
 	l.instance.Send(fmt.Sprintf("set ::%v {%v}", l.varname, text))
 }
 
-func (l *label) SetWidth(width int) *label {
+func (l *label) SetWidth(width int) Label {
 	widgetConfig(l, "width", width)
 	return l
 }
 
-func (l *label) SetUnderline(underline int) *label {
+func (l *label) SetUnderline(underline int) Label {
 	widgetConfig(l, "underline", underline)
 	return l
 }
 
-func (l *label) SetRelief(reliefType ReliefType) *label {
+func (l *label) SetRelief(reliefType ReliefType) Label {
 	widgetConfig(l, "relief", reliefType)
 	return l
 }
 
-func (l *label) SetPadding(values ...int) *label {
+func (l *label) SetPadding(values ...int) Label {
 	setPadding(l, values...)
 	return l
 }
 
-func (l *label) SetJustify(value JustifyValue) *label {
+func (l *label) SetJustify(value JustifyValue) Label {
 	widgetConfig(l, "justify", value)
 	return l
 }
 
-func (l *label) SetAnchor(anchor Anchor) *label {
+func (l *label) SetAnchor(anchor Anchor) Label {
 	switch anchor {
 	case N, NE, E, SE, S, SW, W, NW, CENTER:
 		// all good, do nothing
@@ -94,22 +94,22 @@ func (l *label) SetAnchor(anchor Anchor) *label {
 	return l
 }
 
-func (l *label) SetBackground() *label {
+func (l *label) SetBackground() Label {
 	// todo - implement
 	return l
 }
 
-func (l *label) SetFont(fontName string) *label {
+func (l *label) SetFont(fontName string) Label {
 	widgetConfig(l, "font", "{"+fontName+"}")
 	return l
 }
 
-func (l *label) SetForeground() *label {
+func (l *label) SetForeground() Label {
 	// todo -implement
 	return l
 }
 
-func (l *label) SetWrapLength(length int) *label {
+func (l *label) SetWrapLength(length int) Label {
 	widgetConfig(l, "wraplength", length)
 	return l
 }
