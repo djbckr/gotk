@@ -15,9 +15,9 @@ func (gt *GoTk) BindMouseWheel(owner Widget, key ModifierKey, mwChannel MouseWhe
 
 	var ch chan string
 
-	if ch = widgetChannels[gt.mouseWheelChName]; ch == nil {
+	if ch = gt.widgetChannels[gt.mouseWheelChName]; ch == nil {
 		ch = make(chan string)
-		widgetChannels[gt.mouseWheelChName] = ch
+		gt.widgetChannels[gt.mouseWheelChName] = ch
 	}
 
 	gt.mouseWheelChannels = append(gt.mouseWheelChannels, mwChannel)

@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestTk(t *testing.T) {
@@ -91,7 +90,8 @@ func TestTk(t *testing.T) {
 	// bind . <Return> {calculate}
 	ui.SetBindKey(root, 0, gotk.Return, calcChan)
 
-	ui.WmSetGeometry(root, 250, 200, 100, 100)
+	// get geometry >> ui.WmGeometry(root)
+	ui.WmSetGeometry(root, 350, 200, 100, 100)
 
 	mousewheel := make(chan int, 50)
 
@@ -103,8 +103,9 @@ func TestTk(t *testing.T) {
 		}
 	}()
 
-	time.Sleep(100 * time.Second)
-	ui.Close()
+	ui.Wait()
+
+//	ui.Close()
 }
 
 

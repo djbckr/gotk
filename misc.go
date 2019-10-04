@@ -125,7 +125,7 @@ func (gt *GoTk) SetBindKey(owner Widget, modifier ModifierKey, key string, event
 	chName := randString(5)
 	ch := make(chan string)
 
-	widgetChannels[chName] = ch
+	gt.widgetChannels[chName] = ch
 
 	gt.Send(fmt.Sprintf("bind %v %v {puts $sockChan {¶%v¶%%A§%v§} ; flush $sockChan}", owner.Path(), vv, chName, chName))
 

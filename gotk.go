@@ -44,6 +44,8 @@ type GoTk struct {
 	sendchan           chan string
 	mouseWheelChName   string
 	mouseWheelChannels []MouseWheelChannel
+	widgetChannels     widgetChanType
+	waitChannel        chan int
 }
 
 // Tk instantiates a UI (TK) session. This is where you start.
@@ -68,7 +70,7 @@ func Tk() *GoTk {
 
 	}()
 
-	// stderr handler; if anything happens on stderr, the program should die
+	// stderr handler; if anything happens on stderr, the program should probably die
 	go func() {
 
 		scanner := bufio.NewScanner(pipeErr)
@@ -98,6 +100,8 @@ func Tk() *GoTk {
 		listener:         listener,
 		sendchan:         make(chan string, 10),
 		mouseWheelChName: randString(5),
+		widgetChannels:   make(widgetChanType),
+		waitChannel:      make(chan int),
 	}
 
 	// setup the root window; it's already made for us by wish
@@ -121,6 +125,11 @@ func Tk() *GoTk {
 	gotk.Send(fmt.Sprintf("set sockChan [socket localhost %v]", port))
 
 	return gotk
+}
+
+// Wait for the main window to close
+func (gt *GoTk) Wait() {
+	<- gt.waitChannel
 }
 
 // Close tells TK to shutdown. This also shuts down our application.
@@ -189,10 +198,18 @@ func listenerControl(gt *GoTk) {
 				rslt2 := reTest2.FindAllStringSubmatch(text, -1)
 
 				if rslt1 && len(rslt2) > 0 {
+
+					// we have a complete message
+
 					if (len(rslt2[0]) != 5) || (rslt2[0][4] != rslt2[0][1]) {
+						// a well-formed message will have rslt2[0] length of 5
+						// and the capture of rslt2[0][4] should be the same as rslt2[0][1]
+						// if not, we need to die - can't recover at this point.
 						log.Fatal("Unexpected data on listening channel!")
 					}
-					ch := widgetChannels[rslt2[0][1]]
+
+					// find the channel to pipe to
+					ch := gt.widgetChannels[rslt2[0][1]]
 					if ch != nil {
 						ch <- rslt2[0][2]
 					}
@@ -200,7 +217,9 @@ func listenerControl(gt *GoTk) {
 				}
 
 			}
-
+			// If we get here, the pipe has been closed.
+			// if program is Wait-ing, this unblocks the wait.
+			gt.waitChannel <- 1
 		}(conn)
 	}
 }
@@ -212,12 +231,12 @@ func listenerControl(gt *GoTk) {
 // the command is in-between. Flushing $sockChan is required for timely response.
 func (gt *GoTk) sendAndGetResponse(channelName string, command string, isSubCommand bool) (response string) {
 
-	ch := widgetChannels[channelName]
+	ch := gt.widgetChannels[channelName]
 
 	// channel may not exist, which is fine; create it
 	if ch == nil {
 		ch = make(chan string)
-		widgetChannels[channelName] = ch
+		gt.widgetChannels[channelName] = ch
 	}
 
 	var sb strings.Builder
@@ -234,6 +253,7 @@ func (gt *GoTk) sendAndGetResponse(channelName string, command string, isSubComm
 
 	gt.Send(sb.String())
 
+	// wait for message on the channel
 	response = <-ch
 
 	return

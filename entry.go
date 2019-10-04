@@ -29,7 +29,6 @@ type Entry interface {
 	SetExportSelection(expsel bool) *entry
 	SetJustify(lcr JustifyValue) *entry
 	SetShow(s rune) *entry
-	SetState(state WidgetState) *entry
 	Value() string
 	SetValue(v string)
 }
@@ -46,11 +45,9 @@ func (gt *GoTk) NewEntry(owner Widget) *entry {
 		randString(5),
 	}
 
-	owner.addChild(result)
-
 	result.instance.Send(fmt.Sprintf("ttk::entry %v -textvariable %v", result.path, result.varname))
 
-	widgetChannels[result.varname] = make(chan string)
+	gt.widgetChannels[result.varname] = make(chan string)
 
 	// todo - validate
 	return result
@@ -73,11 +70,6 @@ func (e *entry) SetJustify(lcr JustifyValue) *entry {
 
 func (e *entry) SetShow(s rune) *entry {
 	widgetConfig(e, "show", s)
-	return e
-}
-
-func (e *entry) SetState(state WidgetState) *entry {
-	widgetConfig(e, "state", state)
 	return e
 }
 

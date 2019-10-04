@@ -46,8 +46,6 @@ func (gt *GoTk) NewLabel(owner Widget, text string) *label {
 		randString(5),
 	}
 
-	owner.addChild(result)
-
 	result.instance.Send(fmt.Sprintf("ttk::label %v -textvariable %v", result.path, result.varname))
 
 	result.SetText(text)

@@ -35,8 +35,6 @@ func (gt *GoTk) NewFrame(owner Widget) *frame {
 		makeWidget(owner),
 	}
 
-	owner.addChild(result)
-
 	result.instance.Send(fmt.Sprintf("ttk::frame %v", result.path))
 
 	return result

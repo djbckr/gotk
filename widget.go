@@ -25,8 +25,9 @@ type Widget interface {
 	getWidget() *widget
 	// Parent() *widget
 	addChild(child Widget)
-	SetCursor(cursorType CursorType)
-	SetTakeFocus(takeFocus bool)
+	SetCursor(cursorType CursorType) *widget
+	SetTakeFocus(takeFocus bool) *widget
+	SetState(state WidgetState) *widget
 }
 
 type widget struct {
@@ -50,17 +51,23 @@ func (w *widget) Path() string {
 	return w.path
 }
 
-func (w *widget) SetCursor(cursorType CursorType) {
-	widgetConfig(w, "cursor", cursorType)
+func (w *widget) SetState(state WidgetState) *widget {
+	widgetConfig(w, "state", state)
+	return w
 }
 
-func (w *widget) SetTakeFocus(takeFocus bool) {
+func (w *widget) SetCursor(cursorType CursorType) *widget {
+	widgetConfig(w, "cursor", cursorType)
+	return w
+}
+
+func (w *widget) SetTakeFocus(takeFocus bool) *widget {
 
 	// don't do anything if this is a frame
 	var f interface{} = w
 
 	if _, found := f.(Frame); found == true {
-		return
+		return w
 	}
 
 	// everything else can take focus
@@ -71,6 +78,7 @@ func (w *widget) SetTakeFocus(takeFocus bool) {
 	}
 
 	widgetConfig(w, "takefocus", tf)
+	return w
 }
 
 /*------------------------------------------------*/

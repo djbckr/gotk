@@ -90,14 +90,14 @@ func (g *GridConfig) IPadY(amount int) *GridConfig {
 // PadX - The amount specifies how much horizontal external padding to leave on each side of the widget.
 // Amount may be a list of two values to specify padding for left and right separately.
 func (g *GridConfig) PadX(amount ...int) *GridConfig {
-	g.inf["padx"] = amount
+	g.inf["padx"] = intsToString(amount...)
 	return g
 }
 
 // PadY - The amount specifies how much vertical external padding to leave on the top and bottom of the widget.
 // Amount may be a list of two values to specify padding for top and bottom separately.
 func (g *GridConfig) PadY(amount ...int) *GridConfig {
-	g.inf["pady"] = amount
+	g.inf["pady"] = intsToString(amount...)
 	return g
 }
 
@@ -215,4 +215,15 @@ func mapToString(theMap configmap) string {
 	}
 
 	return sb.String()
+}
+
+func intsToString(i ...int) string {
+	var sb strings.Builder
+
+	for _, x := range i {
+		sb.WriteString(fmt.Sprintf("%v ", x))
+	}
+
+	s := sb.String()
+	return s[:len(s)-1]
 }

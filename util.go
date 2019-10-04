@@ -12,7 +12,6 @@ var alphabet = [...]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"
 var alphabetLen = len(alphabet)
 
 type widgetChanType = map[string]chan string
-var widgetChannels = make(widgetChanType)
 
 // use our own rand/source so-as to not mess up somebody else's
 var myRand = rand.New(rand.NewSource(time.Now().Unix()))
@@ -35,11 +34,13 @@ func makeName(parent Widget) string {
 }
 
 func makeWidget(owner Widget) *widget {
-	return &widget{
+	result := &widget{
 		instance: owner.getInstance(),
 		path:     makeName(owner.getWidget()),
 		parent:   owner.getWidget(),
 	}
+	owner.addChild(result)
+	return result
 }
 
 func setPadding(w Widget, values ...int) {
