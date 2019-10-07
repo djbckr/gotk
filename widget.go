@@ -19,14 +19,24 @@ const (
 )
 
 type Widget interface {
+
+	// Children returns the widgets this widget owns
 	Children() []Widget
+
+	// Path returns the widget name used in the wish interpreter
 	Path() string
 	getInstance() *GoTk
 	getWidget() Widget
 	// Parent() Widget
 	addChild(child Widget)
+
+	// SetCursor sets the CursorType for this widget
 	SetCursor(cursorType CursorType) Widget
+
+	// SetTakeFocus tells TK to allow this widget to focus when tabbing through components
 	SetTakeFocus(takeFocus bool) Widget
+
+	// SetState sets the widget to disabled, readonly, or normal
 	SetState(state WidgetState) Widget
 }
 

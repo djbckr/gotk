@@ -93,6 +93,9 @@ func (e *event) KeyPressed() string {
 */
 type EventChannel = chan Event
 
+// SetBindKey will bind keystrokes and modifiers to a channel. For no modifiers, pass 0, otherwise
+// OR together any of CTRL ALT SHIFT CMD constants. For keys that are not simple letters, use
+// the constants provided
 func (gt *GoTk) SetBindKey(owner Widget, modifier ModifierKey, key string, eventChannel EventChannel) {
 
 	var sb strings.Builder
@@ -164,4 +167,9 @@ func buildModifiers(modifier ModifierKey) string {
 		sb.WriteString("Triple-")
 	}
 	return sb.String()
+}
+
+// WindowingSystem will return one of three values: "aqua" for OSX, "windows" for Windows, and "x11" for Linux
+func (gt *GoTk) WindowingSystem() string {
+	return gt.sendAndGetResponse("windowingsystem", "tk windowingsystem", true)
 }

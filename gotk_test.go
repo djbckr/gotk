@@ -112,6 +112,8 @@ func TestTk(t *testing.T) {
 		fmt.Println(v)
 	}
 
+	fmt.Println(ui.WindowingSystem())
+
 	ui.Wait()
 
 //	ui.Close()

@@ -126,6 +126,9 @@ func Tk() *GoTk {
 	// tell wish to open a socket back to this program
 	gotk.Send(fmt.Sprintf("set sockChan [socket localhost %v]", port))
 
+	// prevent tear-off menus
+	gotk.Send("option add *tearOff 0")
+
 	return gotk
 }
 
