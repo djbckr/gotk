@@ -18,6 +18,15 @@ const (
 	XTERM     CursorType = "xterm"
 )
 
+type WidgetState = string
+
+// Values used to set the state of a widget.
+const (
+	NORMAL   WidgetState = "normal"
+	DISABLED WidgetState = "disabled"
+	READONLY WidgetState = "readonly"
+)
+
 type Widget interface {
 
 	// Children returns the widgets this widget owns

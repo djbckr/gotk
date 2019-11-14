@@ -15,9 +15,16 @@ const (
 // Button is a widget that is "clickable".
 type Button interface {
 	Widget
+
+	// SetText of the button
 	SetText(text string) Button
+
+	// SetUnderline specifies the integer index (0-based) of a character to underline in the text string. The underlined character is used for mnemonic activation.
 	SetUnderline(underline int) Button
+
+	// SetWidth of the button
 	SetWidth(width int) Button
+
 	SetDefault(state ButtonState) Button
 	getFnName() string
 }

@@ -5,6 +5,9 @@ import (
 	"strings"
 )
 
+// This is a structure that you use to determine what file types may be shown in the FileOpenDlg.
+// For example:
+//    fileOpenType := FileOpenType{"PDF Files", ".pdf"}
 type FileOpenType struct {
 	Description string
 	Pattern     string
@@ -12,14 +15,32 @@ type FileOpenType struct {
 
 type FileOpenTypes = []FileOpenType
 
+// FileOpenDlg lets the user to choose one or more files. You can optionally call the configuration functions
+// and finally call Exec() to display the dialog and allow the user to make their selection.
 type FileOpenDlg interface {
+
+	// (Optional) Attach this dialog to a widget (window)
 	SetParent(widget Widget) FileOpenDlg
+
+	// (Optional) Pass a slice of FileOpenTypes to limit the selection that the user can choose.
 	SetFileTypes(types FileOpenTypes) FileOpenDlg
+
+	// (Optional) Open the dialog in this directory
 	SetInitialDir(dir string) FileOpenDlg
+
+	// (Optional) Set the selected file to this file.
 	SetInitialFile(file string) FileOpenDlg
+
+	// (Optional) Allow the user to select multiple files. Default is one file.
 	SetMultiple(multiple bool) FileOpenDlg
+
+	// (Optional) Set the title of this dialog
 	SetTitle(title string) FileOpenDlg
-	Exec() (results []string, err error)
+
+	// Display the dialog to the user. Regardless of whether you have set multiple selections,
+	// this always returns an array of strings. If the user made a selection, the array will
+	// have one or more strings. If the user canceled the dialog, you will receive an empty array.
+	Exec() (results []string)
 }
 
 type fileopendlg struct {
@@ -68,7 +89,7 @@ func (fo *fileopendlg) SetTitle(title string) FileOpenDlg {
 	return fo
 }
 
-func (fo *fileopendlg) Exec() (results []string, err error) {
+func (fo *fileopendlg) Exec() (results []string) {
 	var sb strings.Builder
 
 	sb.WriteString("set dlgResult [tk_getOpenFile")
@@ -122,18 +143,38 @@ func formatFileTypes(ft FileOpenTypes) string {
 	return sb.String()
 }
 
-func parseFileNameList(src string) (result []string, err error) {
+// TK has a pretty bizarre way of returning the selection from this dialog.
+// First, it's a single string that is returned even with multiple selections.
+// Each result is separated by one space. If a filename has a space, TK wraps
+// the filename in {}. The filename could have brace chars {} within, so we
+// have to watch for that as well. When it needs to, it'll prefix a literal
+// with a backslash. (I don't know what this does on Windows)
+func parseFileNameList(src string) (result []string) {
 
 	if src == "" {
 		return
 	}
 
 	var chr rune
+	// a level > 0 means the string is wrapped in {} and we need to look for }
+	// a level < 0 means it's a normal string and we need to look for a space.
 	var level = 0
+	var nextLiteral bool
 
 	var sb strings.Builder
 
 	for _, chr = range src {
+
+		if nextLiteral == false && chr == '\\' {
+			nextLiteral = true
+			continue
+		}
+
+		if nextLiteral {
+			sb.WriteRune(chr)
+			nextLiteral = false
+			continue
+		}
 
 		if level >= 0 && chr == '{' {
 			level++

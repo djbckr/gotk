@@ -103,7 +103,7 @@ func TestTk(t *testing.T) {
 		}
 	}()
 
-	rslt, _ := ui.FileOpenStart().
+	rslt := ui.FileOpenStart().
 		SetMultiple(true).
 		SetTitle("whatever").
 		Exec()

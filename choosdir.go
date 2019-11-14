@@ -5,11 +5,24 @@ import (
 	"strings"
 )
 
+// The ChooseDirectoryDlg interface defines the optional functions you can call to configure the dialog.
+// Call Exec() to display the dialog and return the chosen directory.
 type ChooseDirectoryDlg interface {
+
+	// (Optional) Start the directory search here.
 	SetInitialDir(initialDir string) ChooseDirectoryDlg
+
+	// (Optional) The directory must exist before selection is complete.
 	SetMustExist(mustExist bool) ChooseDirectoryDlg
+
+	// (Optional) The widget (window) that this dialog is attached to.
 	SetParent(parent Widget) ChooseDirectoryDlg
+
+	// (Optional) The title of the dialog window.
 	SetTitle(title string) ChooseDirectoryDlg
+
+	// When finished optionally calling the above functions, call this function to display the dialog. It will return
+	// a string of the chosen directory. If the string is empty, the user canceled the dialog.
 	Exec() string
 }
 
@@ -21,6 +34,8 @@ type choosedirectorydlg struct {
 	instance   *GoTk
 }
 
+// Startup a ChooseDirectoryDlg instance. Call the routines on the returned interface to configure
+// the dialog, then call .Exec() to display the dialog.
 func (gt *GoTk) ChooseDirectoryStart() ChooseDirectoryDlg {
 	return &choosedirectorydlg{
 		instance: gt,

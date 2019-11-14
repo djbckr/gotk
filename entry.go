@@ -4,15 +4,6 @@ import (
 	"fmt"
 )
 
-type WidgetState = string
-
-// Values used to set the state of a widget.
-const (
-	NORMAL   WidgetState = "normal"
-	DISABLED WidgetState = "disabled"
-	READONLY WidgetState = "readonly"
-)
-
 type JustifyValue = string
 
 // Values used to set the alignment of a widget.
@@ -22,14 +13,24 @@ const (
 	RIGHT  JustifyValue = "right"
 )
 
-// This is a text input box.
+// This is a text input box. Use this to allow the user to enter some text to the UI.
 type Entry interface {
 	Widget
+
+	// (Optional) Set the width of the input box.
 	SetWidth(width int) Entry
-	SetExportSelection(expsel bool) Entry
+
+	// (Optional) Set the alignment of the text within the input box
 	SetJustify(lcr JustifyValue) Entry
+
+	// (Optional) If this is intended to be used as a password box,
+	// set the character to be shown as the placeholder for the underlying text.
 	SetShow(s rune) Entry
+
+	// Get the current value of this Entry
 	Value() string
+
+	// Set the value of this Entry
 	SetValue(v string)
 }
 
@@ -38,6 +39,8 @@ type entry struct {
 	varname string
 }
 
+// Create an entry box to eventually be placed on the screen. The owner is the parent widget that
+// this Entry will belong to.
 func (gt *GoTk) NewEntry(owner Widget) Entry {
 
 	result := &entry{
@@ -55,11 +58,6 @@ func (gt *GoTk) NewEntry(owner Widget) Entry {
 
 func (e *entry) SetWidth(width int) Entry {
 	widgetConfig(e, "width", width)
-	return e
-}
-
-func (e *entry) SetExportSelection(expsel bool) Entry {
-	widgetConfig(e, "exportselection", expsel)
 	return e
 }
 
